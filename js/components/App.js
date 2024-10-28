@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 import axios from 'axios';
 import config from '../config.js';
 
@@ -18,7 +18,17 @@ console.log('Ventas URL:', ventasServiceUrl);
 const App = {
 	template: `
 	<h1>Tienda HTTP</h1>
-			<div class="flash danger" v-if="errorMessage">{{ errorMessage }}</div>
+			<div class="flash danger error-messages" ref="errorContainer" v-if="errorMessages.length > 0">
+				<div class="error-message-header">
+					<a href="#" @click.prevent="deleteErrorMessages()">[clear]</a>
+				</div>
+				<ul>
+					<li v-for="(errorMessage, index) in errorMessages" :key="index">
+						<a href="#" @click.prevent="deleteErrorMessage(index)">[x]</a>
+						{{ errorMessage }}
+					</li>
+				</ul>
+			</div>
 
 			<h2>Productos</h2>
 
@@ -275,7 +285,16 @@ const App = {
 
 	setup() {
 		// UTILS
-		let errorMessage = ref(false);
+		const errorMessages = ref([]);
+		const errorContainer = ref(null);
+
+		const deleteErrorMessage = (index) => {
+			errorMessages.value.splice(index, 1);
+		};
+
+		const deleteErrorMessages = (index) => {
+			errorMessages.value = [];
+		};
 
 		const formatDate = (date) => {
 			const d = new Date(date);
@@ -293,6 +312,11 @@ const App = {
 
 		const getProductos = async () => {
 			const { data } = await axios.get(productosServiceUrl);
+			if (typeof data != 'object') {
+				productos.value = [];
+				errorMessages.value.push('productos: data invalid');
+				return;
+			}
 			productos.value = data;
 		};
 
@@ -353,6 +377,11 @@ const App = {
 
 		const getPersonas = async () => {
 			const { data } = await axios.get(personasServiceUrl);
+			if (typeof data != 'object') {
+				productos.value = [];
+				errorMessages.value.push('personas: data invalid');
+				return;
+			}
 			personas.value = data;
 		};
 
@@ -418,7 +447,8 @@ const App = {
 			try {
 				const { data } = await axios.post(ventasServiceUrl, body);
 			} catch (error) {
-				errorMessage.value = error.response.data ? error.response.data.error : false;
+				const errorMessage = error.response.data ? error.response.data.error : false
+				errorMessages.value.push(errorMessage);;
 			} finally {
 				// await getVentas();
 				// await getProductos();
@@ -430,6 +460,11 @@ const App = {
 
 		const getVentas = async () => {
 			const { data } = await axios.get(ventasServiceUrl);
+			if (typeof data != 'object') {
+				productos.value = [];
+				errorMessages.value.push('ventas: data invalid');
+				return;
+			}
 			ventas.value = data;
 		};
 
@@ -487,8 +522,24 @@ const App = {
 			await getVentas();
 		});
 
+		watch(
+			errorMessages,
+			() => {
+				// Al cambiar errorMessages, desplazar al final
+				nextTick(() => {
+					if (errorContainer.value) {
+						errorContainer.value.scrollTop = errorContainer.value.scrollHeight;
+					}
+				});
+			},
+			{ deep: true }
+		);
+
 		return {
-			errorMessage,
+			errorMessages,
+			errorContainer,
+			deleteErrorMessage,
+			deleteErrorMessages,
 			formatDate,
 
 			productos,
