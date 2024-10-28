@@ -7,18 +7,14 @@
     border-radius: 4px;
     background-color: #f8f8f8;
     position: relative;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .error-message-header {
     position: sticky; /* Fija el encabezado en la parte superior */
     top: 0; /* Se mantendrá en la parte superior del contenedor */
-    background-color: rgba(0,0,0,0.2); /* Color de fondo para separar del resto */
+    background-color: rgba(255,0,0,0.2); /* Color de fondo para separar del resto */
     padding: 5px 10px; /* Espaciado alrededor del enlace */
     z-index: 1; /* Asegura que el encabezado esté por encima del contenido desplazado */
     text-align: right;
-}
-
-.error-message-header a {
-    text-decoration: none; /* Quitar subrayado */
-    color: #d9534f; /* Cambiar el color a algo que destaque, como rojo */
 }
