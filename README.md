@@ -5,7 +5,7 @@
 - Macha.css [matcha.css | Drop-in semantic styling library in pure CSS](https://matcha.mizu.sh/)
 
 
-## Run con docker
+## Install con docker
 
 - Levantará un web server nginx en el puerto 3000
 
@@ -16,6 +16,16 @@ docker run \
     --name tienda-http \
     -p 3000:80 \
     tienda-http
+
+# test
+curl http://localhost:3000/
+```
+
+
+## Run con docker
+
+```sh
+docker start tienda-http
 
 # test
 curl http://localhost:3000/
