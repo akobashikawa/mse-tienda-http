@@ -10,6 +10,22 @@
 - Levantará un web server nginx en el puerto 3000
 
 ```sh
+docker build -t tienda-http .
+
+docker run \
+    --name tienda-http \
+    -p 3000:80 \
+    tienda-http
+
+# test
+curl http://localhost:3000/
+```
+
+## Run con docker-compose
+
+- Levantará un web server nginx en el puerto 3000
+
+```sh
 docker-compose up --build
 
 # test
